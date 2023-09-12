@@ -38,6 +38,31 @@ const resolvers = {
     game(parent) {
       return db.games.find(g => g.id === parent.game_id);
     },
+  },
+  Mutation: {
+    addGame(_, args) {
+      const game = { id: String(Number(db.games.at(-1).id) + 1), ...args.game };
+
+      db.games.push(game);
+
+      return game;
+    },
+    updateGame(_, args) {
+      db.games = db.games.map(g => {
+        if(g.id === args.id) {
+          return { ...g, ...args.game };
+        }
+
+        return g;
+      });
+
+      return db.games.find(g => g.id === args.id);
+    },
+    deleteGame(_, args) {
+      db.games = db.games.filter(g => g.id !== args.id);
+
+      return db.games;
+    }
   }
 };
 
