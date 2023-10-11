@@ -7,7 +7,7 @@ const Header = () => {
 
   return (
     <div className="header">
-      <div className="menu-item" onClick={() => navigate("/main")}>Games</div>
+      <div className="menu-item" onClick={() => navigate("/")}>Games</div>
     </div>
   );
 };

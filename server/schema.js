@@ -25,6 +25,7 @@ export const typeDefs = `#graphql
     title: String!
     platform: [String!]!
     reviews: [Review!]!
+    averageRating: Float
   }
   type Review {
     id: ID!

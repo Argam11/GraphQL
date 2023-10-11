@@ -2,14 +2,15 @@ import { createBrowserRouter, Outlet } from "react-router-dom";
 
 import Header from "components/header/header";
 import Main from "pages/Main/Main";
+import GamePage from "pages/GamePage/GamePage";
 import CreateEditFields from "pages/CreateEditFields/CreateEditFields";
 
 const HeaderWrapper = () => {
   return (
-    <div>
+    <>
       <Header />
       <Outlet />
-    </div>
+    </>
   );
 };
 
@@ -19,8 +20,12 @@ const router = createBrowserRouter([
     element: <HeaderWrapper />,
     children: [
       {
-        path: "/main",
+        path: "/",
         element: <Main />,
+      },
+      {
+        path: "/game/:id",
+        element: <GamePage />,
       },
       {
         path: "/edit/:id",
@@ -28,7 +33,6 @@ const router = createBrowserRouter([
       },
     ],
   },
-
   {
     path: "*",
     element: (
