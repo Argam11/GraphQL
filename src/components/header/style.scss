@@ -1,0 +1,13 @@
+.header {
+  background-color: #aaa;
+  display: flex;
+  padding: 5px;
+
+  .menu-item {
+    padding: 5px 10px;
+    background-color: #555;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+}

@@ -1,10 +1,13 @@
-import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
+import { ApolloProvider } from "@apollo/client";
+import { RouterProvider } from "react-router-dom";
+import client from "Apollo/apollo-config";
+import router from "routes";
 
 function App() {
   return (
-    <div className="App">
-      aaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-    </div>
+    <ApolloProvider client={client}>
+      <RouterProvider router={router} />
+    </ApolloProvider>
   );
 }
 
