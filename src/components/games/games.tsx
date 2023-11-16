@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Table, Button } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useQuery } from "@apollo/client";
-import { GET_GAMES } from "Apollo/games";
+import { GET_GAMES } from "apollo/games";
 import Loading from "components/loading/loading";
 
 import "./style.scss";
@@ -17,9 +17,7 @@ interface DataType {
 
 function Games() {
   const navigate = useNavigate();
-  const { loading, data: data2 } = useQuery(GET_GAMES);
-
-  console.log("data", data2);
+  const { loading, data } = useQuery(GET_GAMES);
 
   const columns: ColumnsType<DataType> = useMemo(
     () => [
@@ -63,7 +61,7 @@ function Games() {
     []
   );
 
-  return <div>{loading ? <Loading /> : <Table columns={columns} dataSource={data2.games} rowKey="id" />}</div>;
+  return <div>{loading ? <Loading /> : <Table columns={columns} dataSource={data.games} rowKey="id" />}</div>;
 }
 
 export default Games;

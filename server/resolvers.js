@@ -12,7 +12,13 @@ const resolvers = {
       });
     },
     game(_, args) {
-      return db.games.find((game) => game.id === args.id);
+      const game = db.games.find((game) => game.id === args.id);
+
+      const ratingList = db.reviews.filter((r) => r.game_id === args.id).map((r) => r.rating);
+
+      const averageRating = (ratingList.reduce((a, b) => a + b) / ratingList.length).toFixed(1);
+
+      return { ...game, averageRating };
     },
     authors() {
       return db.authors;
