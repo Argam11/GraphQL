@@ -38,6 +38,16 @@ export const GET_GAME = gql`
         }
         author {
           name
+          verified
+          reviews {
+            id
+            rating
+            content
+            game {
+              id
+              title
+            }
+          }
         }
       }
     }
