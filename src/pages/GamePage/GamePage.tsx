@@ -1,14 +1,12 @@
-import { useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";
-import { GET_GAME } from "apollo/games";
+import { useGetGameQuery } from "__generated__";
 import Loading from "components/loading/loading";
-
 import "./style.scss";
 
 function GamePage() {
-  const { id } = useParams();
+  const { id = "" } = useParams();
 
-  const { data, loading, error } = useQuery(GET_GAME, {
+  const { data, loading } = useGetGameQuery({
     variables: { id },
   });
 
@@ -28,23 +26,23 @@ function GamePage() {
             <div className="review-box">
               {reviews.map((review: any) => {
                 return (
-                  <div className="review-item">
-                    <p>Content: {review.content}</p>
-                    <p>Rating: {review.rating}</p>
-                    <p>Author: {review.author.name}</p>
+                  <div className="review-item" key={review.id}>
                     <p>
-                      Author: {review.author.name} (
-                      {review.author.verified ? "Verified" : "Unverified"})
+                      Author: {review.author.name} ({review.author.verified ? "Verified" : "Unverified"})
                     </p>
+                    <p>Rating: {review.rating}</p>
+                    <p>Content: {review.content}</p>
                     <div className="author-reviews-box">
                       <p>Author's other reviews:</p>
                       {review.author.reviews.map((review: any) => {
-                        console.log('review', review)
                         return (
-                          <div className="author-review-item">
-                            <p>Content: {review.content}</p>
+                          <div className="author-review-item" key={review.id}>
+                            <h4>
+                              Game: {review.game.title}
+                              {review.game.id === id && "*"}
+                            </h4>
                             <p>Rating: {review.rating}</p>
-                            <p>Author: {review.game.title}{review.game.id === id && '*'}</p>
+                            <p>Content: {review.content}</p>
                           </div>
                         );
                       })}
