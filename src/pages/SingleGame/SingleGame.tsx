@@ -24,7 +24,7 @@ function GamePage() {
           <div>
             Reviews:
             <div className="review-box">
-              {reviews.map((review: any) => {
+              {reviews.map(review => {
                 return (
                   <div className="review-item" key={review.id}>
                     <p>
@@ -34,7 +34,7 @@ function GamePage() {
                     <p>Content: {review.content}</p>
                     <div className="author-reviews-box">
                       <p>Author's other reviews:</p>
-                      {review.author.reviews.map((review: any) => {
+                      {review.author.reviews.map(review => {
                         return (
                           <div className="author-review-item" key={review.id}>
                             <h4>

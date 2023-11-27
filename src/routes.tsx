@@ -1,8 +1,8 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
 
 import Header from "components/header/header";
-import Main from "pages/Main/Main";
-import GamePage from "pages/GamePage/GamePage";
+import GamesPage from "pages/Games/Games";
+import SingleGamePage from "pages/SingleGame/SingleGame";
 import CreateEditFields from "pages/CreateEditFields/CreateEditFields";
 
 const HeaderWrapper = () => {
@@ -21,11 +21,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Main />,
+        element: <GamesPage />,
       },
       {
         path: "/game/:id",
-        element: <GamePage />,
+        element: <SingleGamePage />,
       },
       {
         path: "/edit/:id",

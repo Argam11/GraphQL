@@ -56,7 +56,7 @@ function Games() {
         },
       },
     ],
-    []
+    [navigate]
   );
 
   return (
@@ -71,3 +71,4 @@ function Games() {
 }
 
 export default Games;
+
