@@ -61,3 +61,11 @@ export const ADD_GAME = gql`
     }
   }
 `;
+
+export const UPDATE_GAME = gql`
+  mutation UpdateGame($id: ID!, $input: EditGameInput!) {
+    updateGame(id: $id, input: $input) {
+      id
+    }
+  }
+`;

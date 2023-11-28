@@ -1,20 +1,8 @@
-import React, { useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import {
-  Button,
-  Cascader,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Radio,
-  Select,
-  Switch,
-  TreeSelect,
-  Rate,
-} from "antd";
-import { useAddGameMutation } from "__generated__";
-import { type } from "os";
+import { Button, Form, Input, Select, Rate } from "antd";
+import { useAddGameMutation, useUpdateGameMutation, useGetGameLazyQuery } from "__generated__";
+import Loading from "components/loading/loading";
 
 const { TextArea } = Input;
 
@@ -41,108 +29,108 @@ type GameFields = {
   rating: number;
   author: string;
   content: string;
-}
+};
 
 function CreateEditFields() {
-  const { id } = useParams();
-
-  const [addGame, { data, loading }] = useAddGameMutation();
-
-  console.log("data", data);
-
+  const { id = "" } = useParams();
   const [form] = Form.useForm();
+  const [addGame, { loading: addGameLoading }] = useAddGameMutation();
+  const [updateGame, { loading: updateGameLoading }] = useUpdateGameMutation();
+  const [fetchGame, { loading: fetchGameLoading }] = useGetGameLazyQuery();
+
+  useEffect(() => {
+    if (id) {
+      (async () => {
+        try {
+          const { data } = await fetchGame({ variables: { id } });
+          const fieldData = [
+            { name: 'title', value: data?.game?.title },
+            { name: 'platforms', value: data?.game?.platforms },
+          ];
+
+          form.setFields(fieldData);
+        } catch (error) {
+          
+        }
+      })();
+    }
+  }, [id, fetchGame, form]);
 
   const onFinish = (values: GameFields) => {
-    const { title, rating, platforms, author, content } = values;
-    const platformsName = platforms.map((id: string) => platformList.find(platform => platform.id === id)?.name || '');
+    const { title, platforms } = values;
 
-    addGame({
-      variables: {
-        input: {
-          platforms: platformsName,
-          title,
-          reviews: {
-            author_id: author,
-            content,
-            rating
+    if(id) {
+      updateGame({
+        variables: {
+          id,
+          input: {
+            platforms,
+            title
           },
         },
-      },
-    });
+      });
+    } else {
+      addGame({
+        variables: {
+          input: {
+            platforms,
+            title
+          },
+        },
+      });
+    }
   };
 
   return (
-    <Form
-      form={form}
-      labelCol={{ span: 4 }}
-      style={{ maxWidth: 600, padding: "10px" }}
-      onFinish={onFinish}
-    >
-      <Form.Item
-        label="Game name"
-        name="title"
-        rules={[{ required: true, message: "Game name is required!" }]}
-      >
-        <Input placeholder="Game name" />
-      </Form.Item>
+    <>
+      <Loading loading={addGameLoading || updateGameLoading || fetchGameLoading} />
+      <Form form={form} labelCol={{ span: 4 }} style={{ maxWidth: 600, padding: "10px" }} onFinish={onFinish}>
+        <Form.Item label="Game name" name="title" rules={[{ required: true, message: "Game name is required!" }]}>
+          <Input placeholder="Game name" />
+        </Form.Item>
 
-      <Form.Item
-        label="Platforms"
-        name="platforms"
-        rules={[{ required: true, message: "Platforms is required!" }]}
-      >
-        <Select placeholder="Select a platforms" mode="multiple">
-          {platformList.map((p) => {
-            return (
-              <Select.Option value={p.id} key={p.id}>
-                {p.name}
-              </Select.Option>
-            );
-          })}
-        </Select>
-      </Form.Item>
-
-      <div>
-        <h3>Reviews</h3>
-        <Form.Item
-          label="Author"
-          name="author"
-          rules={[{ required: true, message: "Author is required!" }]}
-        >
-          <Select placeholder="Select an author">
-            {authorList.map((a) => {
+        <Form.Item label="Platforms" name="platforms" rules={[{ required: true, message: "Platforms is required!" }]}>
+          <Select placeholder="Select a platforms" mode="multiple">
+            {platformList.map((p) => {
               return (
-                <Select.Option value={a.id} key={a.id}>
-                  {a.name}
+                <Select.Option value={p.name} key={p.id}>
+                  {p.name}
                 </Select.Option>
               );
             })}
           </Select>
         </Form.Item>
 
-        <Form.Item
-          label="Rating"
-          name="rating"
-          rules={[{ required: true, message: "Rating is required!" }]}
-        >
-          <Rate />
-        </Form.Item>
+        {/* <div>
+          <h3>Reviews</h3>
+          <Form.Item label="Author" name="author" rules={[{ required: true, message: "Author is required!" }]}>
+            <Select placeholder="Select an author">
+              {authorList.map((a) => {
+                return (
+                  <Select.Option value={a.id} key={a.id}>
+                    {a.name}
+                  </Select.Option>
+                );
+              })}
+            </Select>
+          </Form.Item>
 
-        <Form.Item
-          label="Content"
-          name="content"
-          rules={[{ required: true, message: "Content is required!" }]}
-        >
-          <TextArea rows={4} placeholder="Review text" maxLength={6} />
-        </Form.Item>
-      </div>
+          <Form.Item label="Rating" name="rating" rules={[{ required: true, message: "Rating is required!" }]}>
+            <Rate />
+          </Form.Item>
 
-      <Form.Item style={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button type="primary" style={{ padding: "0 30px" }} htmlType="submit">
-          Save
-        </Button>
-      </Form.Item>
-    </Form>
+          <Form.Item label="Content" name="content" rules={[{ required: true, message: "Content is required!" }]}>
+            <TextArea rows={4} placeholder="Review text" maxLength={6} />
+          </Form.Item>
+        </div> */}
+
+        <Form.Item style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button type="primary" style={{ padding: "0 30px" }} htmlType="submit">
+            Save
+          </Button>
+        </Form.Item>
+      </Form>
+    </>
   );
 }
 

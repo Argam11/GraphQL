@@ -6,9 +6,13 @@ const resolvers = {
       return db.games.map((g) => {
         const ratingList = db.reviews.filter((r) => r.game_id === g.id).map((r) => r.rating);
 
-        const averageRating = (ratingList.reduce((a, b) => a + b) / ratingList.length).toFixed(1);
+        if(ratingList.length) {
+          const averageRating = (ratingList.reduce((a, b) => a + b, 0) / ratingList.length).toFixed(1);
+  
+          return { ...g, averageRating };
+        }
 
-        return { ...g, averageRating };
+        return g;
       });
     },
     game(_, args) {
@@ -16,9 +20,13 @@ const resolvers = {
 
       const ratingList = db.reviews.filter((r) => r.game_id === args.id).map((r) => r.rating);
 
-      const averageRating = (ratingList.reduce((a, b) => a + b) / ratingList.length).toFixed(1);
+      if(ratingList.length) {
+        const averageRating = (ratingList.reduce((a, b) => a + b) / ratingList.length).toFixed(1);
+  
+        return { ...game, averageRating };
+      }
 
-      return { ...game, averageRating };
+      return game;
     },
     authors() {
       return db.authors;
@@ -46,7 +54,7 @@ const resolvers = {
   Review: {
     author(parent) {
       const author = db.authors.find((a) => a.id === parent.author_id);
-      author.reviews = db.reviews.filter((r) => r.author_id === parent.author_id);;
+      author.reviews = db.reviews.filter((r) => r.author_id === parent.author_id);
 
       return author;
     },
@@ -55,25 +63,24 @@ const resolvers = {
     },
   },
   Mutation: {
-    addGame(_, { input: { title, platforms, reviews } }) {
-      const game = { id: String(Number(db.games.at(-1).id) + 1), title, platforms };
-      const review = { id: String(Number(db.reviews.at(-1).id) + 1), game_id: game.id, ...reviews };
+    async addGame(_, { input }) {
+      const game = { id: String(Number(db.games.at(-1).id) + 1), ...input };
 
       db.games.push(game);
-      db.reviews.push(review);
 
       return game;
     },
-    updateGame(_, args) {
+    updateGame(_, { id, input }) {
+      console.log("args", input);
       db.games = db.games.map((g) => {
-        if (g.id === args.id) {
-          return { ...g, ...args.game };
+        if (g.id === id) {
+          return { ...g, ...input };
         }
 
         return g;
       });
 
-      return db.games.find((g) => g.id === args.id);
+      return db.games.find((g) => g.id === id);
     },
     deleteGame(_, args) {
       db.games = db.games.filter((g) => g.id !== args.id);

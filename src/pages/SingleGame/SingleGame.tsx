@@ -13,48 +13,43 @@ function GamePage() {
   const { title, platforms, averageRating, reviews = [] } = data?.game || {};
 
   return (
-    <>
-      {loading ? (
-        <Loading />
-      ) : (
-        <div>
-          <h3>Game title: {title}</h3>
-          <p>Platform: {platforms?.join(", ")}</p>
-          <p>Rating: {averageRating}</p>
-          <div>
-            Reviews:
-            <div className="review-box">
-              {reviews.map(review => {
-                return (
-                  <div className="review-item" key={review.id}>
-                    <p>
-                      Author: {review.author.name} ({review.author.verified ? "Verified" : "Unverified"})
-                    </p>
-                    <p>Rating: {review.rating}</p>
-                    <p>Content: {review.content}</p>
-                    <div className="author-reviews-box">
-                      <p>Author's other reviews:</p>
-                      {review.author.reviews.map(review => {
-                        return (
-                          <div className="author-review-item" key={review.id}>
-                            <h4>
-                              Game: {review.game.title}
-                              {review.game.id === id && "*"}
-                            </h4>
-                            <p>Rating: {review.rating}</p>
-                            <p>Content: {review.content}</p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+    <div>
+      <Loading loading={loading} />
+      <h3>Game title: {title}</h3>
+      <p>Platform: {platforms?.join(", ")}</p>
+      <p>Rating: {averageRating}</p>
+      <div>
+        Reviews:
+        <div className="review-box">
+          {reviews.map((review) => {
+            return (
+              <div className="review-item" key={review.id}>
+                <p>
+                  Author: {review.author.name} ({review.author.verified ? "Verified" : "Unverified"})
+                </p>
+                <p>Rating: {review.rating}</p>
+                <p>Content: {review.content}</p>
+                <div className="author-reviews-box">
+                  <p>Author's other reviews:</p>
+                  {review.author.reviews.map((review) => {
+                    return (
+                      <div className="author-review-item" key={review.id}>
+                        <h4>
+                          Game: {review.game.title}
+                          {review.game.id === id && "*"}
+                        </h4>
+                        <p>Rating: {review.rating}</p>
+                        <p>Content: {review.content}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
         </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 }
 

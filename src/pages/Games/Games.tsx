@@ -39,7 +39,14 @@ function Games() {
           return <p>{platforms?.join(", ")}</p>;
         },
       },
-      { title: "Rating", dataIndex: "averageRating", key: "averageRating" },
+      {
+        title: "Rating",
+        dataIndex: "averageRating",
+        key: "averageRating",
+        render: (averageRating: number | null) => {
+          return <p>{averageRating || "_"}</p>;
+        },
+      },
       {
         title: "",
         dataIndex: "",
@@ -61,14 +68,10 @@ function Games() {
 
   return (
     <div>
-      {loading ? (
-        <Loading />
-      ) : (
-        <Table columns={columns} dataSource={data?.games as TableProps<DataType>["dataSource"]} rowKey="id" />
-      )}
+      <Loading loading={loading} />
+      <Table columns={columns} dataSource={data?.games as TableProps<DataType>["dataSource"]} rowKey="id" />
     </div>
   );
 }
 
 export default Games;
-

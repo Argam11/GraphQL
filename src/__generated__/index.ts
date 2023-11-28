@@ -21,7 +21,6 @@ export type Scalars = {
 
 export type AddGameInput = {
   platforms: Array<InputMaybe<Scalars['String']['input']>>;
-  reviews: ReviewInput;
   title: Scalars['String']['input'];
 };
 
@@ -128,6 +127,14 @@ export type AddGameMutationVariables = Exact<{
 
 
 export type AddGameMutation = { __typename?: 'Mutation', addGame?: { __typename?: 'Game', id: string } | null };
+
+export type UpdateGameMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  input: EditGameInput;
+}>;
+
+
+export type UpdateGameMutation = { __typename?: 'Mutation', updateGame?: { __typename?: 'Game', id: string } | null };
 
 
 
@@ -433,3 +440,37 @@ export function useAddGameMutation(baseOptions?: Apollo.MutationHookOptions<AddG
 export type AddGameMutationHookResult = ReturnType<typeof useAddGameMutation>;
 export type AddGameMutationResult = Apollo.MutationResult<AddGameMutation>;
 export type AddGameMutationOptions = Apollo.BaseMutationOptions<AddGameMutation, AddGameMutationVariables>;
+export const UpdateGameDocument = gql`
+    mutation UpdateGame($id: ID!, $input: EditGameInput!) {
+  updateGame(id: $id, input: $input) {
+    id
+  }
+}
+    `;
+export type UpdateGameMutationFn = Apollo.MutationFunction<UpdateGameMutation, UpdateGameMutationVariables>;
+
+/**
+ * __useUpdateGameMutation__
+ *
+ * To run a mutation, you first call `useUpdateGameMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateGameMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateGameMutation, { data, loading, error }] = useUpdateGameMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateGameMutation(baseOptions?: Apollo.MutationHookOptions<UpdateGameMutation, UpdateGameMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateGameMutation, UpdateGameMutationVariables>(UpdateGameDocument, options);
+      }
+export type UpdateGameMutationHookResult = ReturnType<typeof useUpdateGameMutation>;
+export type UpdateGameMutationResult = Apollo.MutationResult<UpdateGameMutation>;
+export type UpdateGameMutationOptions = Apollo.BaseMutationOptions<UpdateGameMutation, UpdateGameMutationVariables>;

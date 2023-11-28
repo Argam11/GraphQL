@@ -15,7 +15,6 @@ export const typeDefs = `#graphql
   input AddGameInput {
     title: String!
     platforms: [String]!
-    reviews: ReviewInput!
   }
   input EditGameInput {
     title: String,
