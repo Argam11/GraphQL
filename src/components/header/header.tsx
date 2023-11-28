@@ -8,6 +8,7 @@ const Header = () => {
   return (
     <div className="header">
       <div className="menu-item" onClick={() => navigate("/")}>Games</div>
+      <div className="menu-item" onClick={() => navigate("/create")}>Add new game</div>
     </div>
   );
 };

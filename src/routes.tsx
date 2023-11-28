@@ -28,6 +28,10 @@ const router = createBrowserRouter([
         element: <SingleGamePage />,
       },
       {
+        path: "/create",
+        element: <CreateEditFields />,
+      },
+      {
         path: "/edit/:id",
         element: <CreateEditFields />,
       },

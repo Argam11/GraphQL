@@ -5,7 +5,7 @@ export const GET_GAMES = gql`
     games {
       id
       title
-      platform
+      platforms
       averageRating
       reviews {
         id
@@ -27,7 +27,7 @@ export const GET_GAME = gql`
     game(id: $id) {
       id
       title
-      platform
+      platforms
       averageRating
       reviews {
         id
@@ -50,6 +50,14 @@ export const GET_GAME = gql`
           }
         }
       }
+    }
+  }
+`;
+
+export const ADD_GAME = gql`
+  mutation AddGame($input: AddGameInput!) {
+    addGame(input: $input) {
+      id
     }
   }
 `;

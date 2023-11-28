@@ -9,7 +9,7 @@ import "./style.scss";
 interface DataType {
   id: React.Key;
   title: string;
-  platform: string[];
+  platforms: string[];
   averageRating: string[];
 }
 
@@ -32,11 +32,11 @@ function Games() {
         },
       },
       {
-        title: "Platform",
-        dataIndex: "platform",
-        key: "platform",
-        render: (platform: string[]) => {
-          return <p>{platform?.join(", ")}</p>;
+        title: "Platforms",
+        dataIndex: "platforms",
+        key: "platforms",
+        render: (platforms: string[]) => {
+          return <p>{platforms?.join(", ")}</p>;
         },
       },
       { title: "Rating", dataIndex: "averageRating", key: "averageRating" },

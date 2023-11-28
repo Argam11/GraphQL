@@ -55,10 +55,12 @@ const resolvers = {
     },
   },
   Mutation: {
-    addGame(_, args) {
-      const game = { id: String(Number(db.games.at(-1).id) + 1), ...args.game };
+    addGame(_, { input: { title, platforms, reviews } }) {
+      const game = { id: String(Number(db.games.at(-1).id) + 1), title, platforms };
+      const review = { id: String(Number(db.reviews.at(-1).id) + 1), game_id: game.id, ...reviews };
 
       db.games.push(game);
+      db.reviews.push(review);
 
       return game;
     },

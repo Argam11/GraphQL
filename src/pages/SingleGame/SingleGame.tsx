@@ -10,7 +10,7 @@ function GamePage() {
     variables: { id },
   });
 
-  const { title, platform, averageRating, reviews = [] } = data?.game || {};
+  const { title, platforms, averageRating, reviews = [] } = data?.game || {};
 
   return (
     <>
@@ -19,7 +19,7 @@ function GamePage() {
       ) : (
         <div>
           <h3>Game title: {title}</h3>
-          <p>Platform: {platform}</p>
+          <p>Platform: {platforms?.join(", ")}</p>
           <p>Rating: {averageRating}</p>
           <div>
             Reviews:

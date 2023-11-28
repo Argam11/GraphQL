@@ -20,7 +20,8 @@ export type Scalars = {
 };
 
 export type AddGameInput = {
-  platform: Array<InputMaybe<Scalars['String']['input']>>;
+  platforms: Array<InputMaybe<Scalars['String']['input']>>;
+  reviews: ReviewInput;
   title: Scalars['String']['input'];
 };
 
@@ -33,7 +34,7 @@ export type Author = {
 };
 
 export type EditGameInput = {
-  platform?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  platforms?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   title?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -41,7 +42,7 @@ export type Game = {
   __typename?: 'Game';
   averageRating?: Maybe<Scalars['Float']['output']>;
   id: Scalars['ID']['output'];
-  platform: Array<Scalars['String']['output']>;
+  platforms: Array<Scalars['String']['output']>;
   reviews: Array<Review>;
   title: Scalars['String']['output'];
 };
@@ -55,7 +56,7 @@ export type Mutation = {
 
 
 export type MutationAddGameArgs = {
-  game?: InputMaybe<AddGameInput>;
+  input: AddGameInput;
 };
 
 
@@ -65,8 +66,8 @@ export type MutationDeleteGameArgs = {
 
 
 export type MutationUpdateGameArgs = {
-  game?: InputMaybe<EditGameInput>;
   id: Scalars['ID']['input'];
+  input?: InputMaybe<EditGameInput>;
 };
 
 export type Query = {
@@ -103,17 +104,30 @@ export type Review = {
   rating: Scalars['Int']['output'];
 };
 
+export type ReviewInput = {
+  author_id: Scalars['String']['input'];
+  content: Scalars['String']['input'];
+  rating: Scalars['Int']['input'];
+};
+
 export type GetGamesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetGamesQuery = { __typename?: 'Query', games?: Array<{ __typename?: 'Game', id: string, title: string, platform: Array<string>, averageRating?: number | null, reviews: Array<{ __typename?: 'Review', id: string, rating: number, content: string, game: { __typename?: 'Game', title: string }, author: { __typename?: 'Author', name: string } }> } | null> | null };
+export type GetGamesQuery = { __typename?: 'Query', games?: Array<{ __typename?: 'Game', id: string, title: string, platforms: Array<string>, averageRating?: number | null, reviews: Array<{ __typename?: 'Review', id: string, rating: number, content: string, game: { __typename?: 'Game', title: string }, author: { __typename?: 'Author', name: string } }> } | null> | null };
 
 export type GetGameQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type GetGameQuery = { __typename?: 'Query', game?: { __typename?: 'Game', id: string, title: string, platform: Array<string>, averageRating?: number | null, reviews: Array<{ __typename?: 'Review', id: string, rating: number, content: string, game: { __typename?: 'Game', title: string }, author: { __typename?: 'Author', name: string, verified: boolean, reviews: Array<{ __typename?: 'Review', id: string, rating: number, content: string, game: { __typename?: 'Game', id: string, title: string } }> } }> } | null };
+export type GetGameQuery = { __typename?: 'Query', game?: { __typename?: 'Game', id: string, title: string, platforms: Array<string>, averageRating?: number | null, reviews: Array<{ __typename?: 'Review', id: string, rating: number, content: string, game: { __typename?: 'Game', title: string }, author: { __typename?: 'Author', name: string, verified: boolean, reviews: Array<{ __typename?: 'Review', id: string, rating: number, content: string, game: { __typename?: 'Game', id: string, title: string } }> } }> } | null };
+
+export type AddGameMutationVariables = Exact<{
+  input: AddGameInput;
+}>;
+
+
+export type AddGameMutation = { __typename?: 'Mutation', addGame?: { __typename?: 'Game', id: string } | null };
 
 
 
@@ -197,6 +211,7 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Review: ResolverTypeWrapper<Review>;
+  ReviewInput: ReviewInput;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
 };
 
@@ -213,6 +228,7 @@ export type ResolversParentTypes = {
   Mutation: {};
   Query: {};
   Review: Review;
+  ReviewInput: ReviewInput;
   String: Scalars['String']['output'];
 };
 
@@ -227,14 +243,14 @@ export type AuthorResolvers<ContextType = any, ParentType extends ResolversParen
 export type GameResolvers<ContextType = any, ParentType extends ResolversParentTypes['Game'] = ResolversParentTypes['Game']> = {
   averageRating?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  platform?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  platforms?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   reviews?: Resolver<Array<ResolversTypes['Review']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  addGame?: Resolver<Maybe<ResolversTypes['Game']>, ParentType, ContextType, Partial<MutationAddGameArgs>>;
+  addGame?: Resolver<Maybe<ResolversTypes['Game']>, ParentType, ContextType, RequireFields<MutationAddGameArgs, 'input'>>;
   deleteGame?: Resolver<Maybe<Array<Maybe<ResolversTypes['Game']>>>, ParentType, ContextType, RequireFields<MutationDeleteGameArgs, 'id'>>;
   updateGame?: Resolver<Maybe<ResolversTypes['Game']>, ParentType, ContextType, RequireFields<MutationUpdateGameArgs, 'id'>>;
 };
@@ -272,7 +288,7 @@ export const GetGamesDocument = gql`
   games {
     id
     title
-    platform
+    platforms
     averageRating
     reviews {
       id
@@ -325,7 +341,7 @@ export const GetGameDocument = gql`
   game(id: $id) {
     id
     title
-    platform
+    platforms
     averageRating
     reviews {
       id
@@ -384,3 +400,36 @@ export type GetGameQueryHookResult = ReturnType<typeof useGetGameQuery>;
 export type GetGameLazyQueryHookResult = ReturnType<typeof useGetGameLazyQuery>;
 export type GetGameSuspenseQueryHookResult = ReturnType<typeof useGetGameSuspenseQuery>;
 export type GetGameQueryResult = Apollo.QueryResult<GetGameQuery, GetGameQueryVariables>;
+export const AddGameDocument = gql`
+    mutation AddGame($input: AddGameInput!) {
+  addGame(input: $input) {
+    id
+  }
+}
+    `;
+export type AddGameMutationFn = Apollo.MutationFunction<AddGameMutation, AddGameMutationVariables>;
+
+/**
+ * __useAddGameMutation__
+ *
+ * To run a mutation, you first call `useAddGameMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddGameMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addGameMutation, { data, loading, error }] = useAddGameMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAddGameMutation(baseOptions?: Apollo.MutationHookOptions<AddGameMutation, AddGameMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddGameMutation, AddGameMutationVariables>(AddGameDocument, options);
+      }
+export type AddGameMutationHookResult = ReturnType<typeof useAddGameMutation>;
+export type AddGameMutationResult = Apollo.MutationResult<AddGameMutation>;
+export type AddGameMutationOptions = Apollo.BaseMutationOptions<AddGameMutation, AddGameMutationVariables>;
