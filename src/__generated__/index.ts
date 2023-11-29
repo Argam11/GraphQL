@@ -49,7 +49,7 @@ export type Game = {
 export type Mutation = {
   __typename?: 'Mutation';
   addGame?: Maybe<Game>;
-  deleteGame?: Maybe<Array<Maybe<Game>>>;
+  deleteGame?: Maybe<Game>;
   updateGame?: Maybe<Game>;
 };
 
@@ -135,6 +135,13 @@ export type UpdateGameMutationVariables = Exact<{
 
 
 export type UpdateGameMutation = { __typename?: 'Mutation', updateGame?: { __typename?: 'Game', id: string } | null };
+
+export type DeleteGameMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteGameMutation = { __typename?: 'Mutation', deleteGame?: { __typename?: 'Game', id: string } | null };
 
 
 
@@ -258,7 +265,7 @@ export type GameResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   addGame?: Resolver<Maybe<ResolversTypes['Game']>, ParentType, ContextType, RequireFields<MutationAddGameArgs, 'input'>>;
-  deleteGame?: Resolver<Maybe<Array<Maybe<ResolversTypes['Game']>>>, ParentType, ContextType, RequireFields<MutationDeleteGameArgs, 'id'>>;
+  deleteGame?: Resolver<Maybe<ResolversTypes['Game']>, ParentType, ContextType, RequireFields<MutationDeleteGameArgs, 'id'>>;
   updateGame?: Resolver<Maybe<ResolversTypes['Game']>, ParentType, ContextType, RequireFields<MutationUpdateGameArgs, 'id'>>;
 };
 
@@ -474,3 +481,36 @@ export function useUpdateGameMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateGameMutationHookResult = ReturnType<typeof useUpdateGameMutation>;
 export type UpdateGameMutationResult = Apollo.MutationResult<UpdateGameMutation>;
 export type UpdateGameMutationOptions = Apollo.BaseMutationOptions<UpdateGameMutation, UpdateGameMutationVariables>;
+export const DeleteGameDocument = gql`
+    mutation DeleteGame($id: ID!) {
+  deleteGame(id: $id) {
+    id
+  }
+}
+    `;
+export type DeleteGameMutationFn = Apollo.MutationFunction<DeleteGameMutation, DeleteGameMutationVariables>;
+
+/**
+ * __useDeleteGameMutation__
+ *
+ * To run a mutation, you first call `useDeleteGameMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteGameMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteGameMutation, { data, loading, error }] = useDeleteGameMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteGameMutation(baseOptions?: Apollo.MutationHookOptions<DeleteGameMutation, DeleteGameMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteGameMutation, DeleteGameMutationVariables>(DeleteGameDocument, options);
+      }
+export type DeleteGameMutationHookResult = ReturnType<typeof useDeleteGameMutation>;
+export type DeleteGameMutationResult = Apollo.MutationResult<DeleteGameMutation>;
+export type DeleteGameMutationOptions = Apollo.BaseMutationOptions<DeleteGameMutation, DeleteGameMutationVariables>;
