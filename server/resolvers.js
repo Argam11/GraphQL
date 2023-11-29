@@ -71,7 +71,6 @@ const resolvers = {
       return game;
     },
     updateGame(_, { id, input }) {
-      console.log("args", input);
       db.games = db.games.map((g) => {
         if (g.id === id) {
           return { ...g, ...input };

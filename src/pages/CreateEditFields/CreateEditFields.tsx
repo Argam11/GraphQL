@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button, Form, Input, Select, Rate } from "antd";
 import { useAddGameMutation, useUpdateGameMutation, useGetGameLazyQuery } from "__generated__";
 import Loading from "components/loading/loading";
@@ -32,6 +32,7 @@ type GameFields = {
 };
 
 function CreateEditFields() {
+  const navigate = useNavigate();
   const { id = "" } = useParams();
   const [form] = Form.useForm();
   const [addGame, { loading: addGameLoading }] = useAddGameMutation();
@@ -56,28 +57,34 @@ function CreateEditFields() {
     }
   }, [id, fetchGame, form]);
 
-  const onFinish = (values: GameFields) => {
-    const { title, platforms } = values;
+  const onFinish = async (values: GameFields) => {
+    try {
+      const { title, platforms } = values;
 
-    if(id) {
-      updateGame({
-        variables: {
-          id,
-          input: {
-            platforms,
-            title
+      if(id) {
+        await updateGame({
+          variables: {
+            id,
+            input: {
+              platforms,
+              title
+            },
           },
-        },
-      });
-    } else {
-      addGame({
-        variables: {
-          input: {
-            platforms,
-            title
+        });
+      } else {
+        addGame({
+          variables: {
+            input: {
+              platforms,
+              title
+            },
           },
-        },
-      });
+        });
+      }
+
+      navigate('/');
+    } catch (error) {
+      console.error(error);
     }
   };
 

@@ -15,7 +15,7 @@ interface DataType {
 
 function Games() {
   const navigate = useNavigate();
-  const { loading, data } = useGetGamesQuery();
+  const { loading, data } = useGetGamesQuery({ fetchPolicy: "network-only" });
 
   const columns: ColumnsType<DataType> = useMemo(
     () => [
@@ -54,7 +54,10 @@ function Games() {
         render: (game: DataType) => {
           return (
             <div className="actions">
-              <div className="edit" onClick={() => navigate(`/edit/${game.id}`)}>
+              <div
+                className="edit"
+                onClick={() => navigate(`/edit/${game.id}`)}
+              >
                 Edit
               </div>
               <div className="delete">Delete</div>
@@ -69,7 +72,11 @@ function Games() {
   return (
     <div>
       <Loading loading={loading} />
-      <Table columns={columns} dataSource={data?.games as TableProps<DataType>["dataSource"]} rowKey="id" />
+      <Table
+        columns={columns}
+        dataSource={data?.games as TableProps<DataType>["dataSource"]}
+        rowKey="id"
+      />
     </div>
   );
 }
