@@ -1,22 +1,27 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const GET_GAMES = gql`
-  query GetGames {
-    games {
-      id
-      title
-      platforms
-      averageRating
-      reviews {
+  query GetGames($page: Int) {
+    games(page: $page) {
+      data {
         id
-        rating
-        content
-        game {
-          title
+        title
+        platforms
+        averageRating
+        reviews {
+          id
+          rating
+          content
+          game {
+            title
+          }
+          author {
+            name
+          }
         }
-        author {
-          name
-        }
+      }
+      paginationInfo {
+        total
       }
     }
   }

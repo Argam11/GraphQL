@@ -1,7 +1,7 @@
-import React, { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Table, Button, Modal } from "antd";
-import type { ColumnsType, TableProps } from "antd/es/table";
+import type { ColumnsType, TableProps, TablePaginationConfig } from "antd/es/table";
 import { useGetGamesQuery, useDeleteGameMutation } from "__generated__";
 import Loading from "components/loading/loading";
 import "./style.scss";
@@ -15,8 +15,13 @@ interface DataType {
 
 function Games() {
   const navigate = useNavigate();
-  const { loading, data, refetch } = useGetGamesQuery({ fetchPolicy: "network-only" });
+  const [page, setPage] = useState(1);
+  const { loading, data, refetch } = useGetGamesQuery({ variables: { page }, fetchPolicy: "network-only" });
   const [deleteGame] = useDeleteGameMutation();
+
+  const onChange = (pagination: TablePaginationConfig) => {
+    setPage(pagination.current || 1);
+  };
 
   const columns: ColumnsType<DataType> = useMemo(
     () => [
@@ -84,13 +89,19 @@ function Games() {
         },
       },
     ],
-    [navigate, deleteGame]
+    [navigate, deleteGame, refetch]
   );
 
   return (
     <div>
       <Loading loading={loading} />
-      <Table columns={columns} dataSource={data?.games as TableProps<DataType>["dataSource"]} rowKey="id" />
+      <Table
+        columns={columns}
+        dataSource={data?.games?.data as TableProps<DataType>["dataSource"]}
+        rowKey="id"
+        pagination={{ total: data?.games?.paginationInfo.total, showSizeChanger: false }}
+        onChange={onChange}
+      />
     </div>
   );
 }

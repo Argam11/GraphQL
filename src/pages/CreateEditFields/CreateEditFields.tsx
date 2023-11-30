@@ -4,7 +4,7 @@ import { Button, Form, Input, Select, Rate } from "antd";
 import { useAddGameMutation, useUpdateGameMutation, useGetGameLazyQuery } from "__generated__";
 import Loading from "components/loading/loading";
 
-const { TextArea } = Input;
+// const { TextArea } = Input;
 
 const platformList = [
   { id: "1", name: "Switch" },
@@ -17,11 +17,11 @@ const platformList = [
   { id: "8", name: "Windows" },
   { id: "9", name: "Browser" },
 ];
-const authorList = [
-  { id: "1", name: "Mario" },
-  { id: "2", name: "Yoshi" },
-  { id: "3", name: "Peach" },
-];
+// const authorList = [
+//   { id: "1", name: "Mario" },
+//   { id: "2", name: "Yoshi" },
+//   { id: "3", name: "Peach" },
+// ];
 
 type GameFields = {
   title: string;

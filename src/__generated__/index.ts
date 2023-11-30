@@ -46,6 +46,12 @@ export type Game = {
   title: Scalars['String']['output'];
 };
 
+export type Games = {
+  __typename?: 'Games';
+  data: Array<Maybe<Game>>;
+  paginationInfo: Pagination;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   addGame?: Maybe<Game>;
@@ -69,12 +75,17 @@ export type MutationUpdateGameArgs = {
   input?: InputMaybe<EditGameInput>;
 };
 
+export type Pagination = {
+  __typename?: 'Pagination';
+  total: Scalars['Int']['output'];
+};
+
 export type Query = {
   __typename?: 'Query';
   author?: Maybe<Author>;
   authors?: Maybe<Array<Maybe<Author>>>;
   game?: Maybe<Game>;
-  games?: Maybe<Array<Maybe<Game>>>;
+  games?: Maybe<Games>;
   review?: Maybe<Review>;
   reviews?: Maybe<Array<Maybe<Review>>>;
 };
@@ -87,6 +98,11 @@ export type QueryAuthorArgs = {
 
 export type QueryGameArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryGamesArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -109,10 +125,12 @@ export type ReviewInput = {
   rating: Scalars['Int']['input'];
 };
 
-export type GetGamesQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetGamesQueryVariables = Exact<{
+  page?: InputMaybe<Scalars['Int']['input']>;
+}>;
 
 
-export type GetGamesQuery = { __typename?: 'Query', games?: Array<{ __typename?: 'Game', id: string, title: string, platforms: Array<string>, averageRating?: number | null, reviews: Array<{ __typename?: 'Review', id: string, rating: number, content: string, game: { __typename?: 'Game', title: string }, author: { __typename?: 'Author', name: string } }> } | null> | null };
+export type GetGamesQuery = { __typename?: 'Query', games?: { __typename?: 'Games', data: Array<{ __typename?: 'Game', id: string, title: string, platforms: Array<string>, averageRating?: number | null, reviews: Array<{ __typename?: 'Review', id: string, rating: number, content: string, game: { __typename?: 'Game', title: string }, author: { __typename?: 'Author', name: string } }> } | null>, paginationInfo: { __typename?: 'Pagination', total: number } } | null };
 
 export type GetGameQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -220,9 +238,11 @@ export type ResolversTypes = {
   EditGameInput: EditGameInput;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   Game: ResolverTypeWrapper<Game>;
+  Games: ResolverTypeWrapper<Games>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Mutation: ResolverTypeWrapper<{}>;
+  Pagination: ResolverTypeWrapper<Pagination>;
   Query: ResolverTypeWrapper<{}>;
   Review: ResolverTypeWrapper<Review>;
   ReviewInput: ReviewInput;
@@ -237,9 +257,11 @@ export type ResolversParentTypes = {
   EditGameInput: EditGameInput;
   Float: Scalars['Float']['output'];
   Game: Game;
+  Games: Games;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   Mutation: {};
+  Pagination: Pagination;
   Query: {};
   Review: Review;
   ReviewInput: ReviewInput;
@@ -263,17 +285,28 @@ export type GameResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type GamesResolvers<ContextType = any, ParentType extends ResolversParentTypes['Games'] = ResolversParentTypes['Games']> = {
+  data?: Resolver<Array<Maybe<ResolversTypes['Game']>>, ParentType, ContextType>;
+  paginationInfo?: Resolver<ResolversTypes['Pagination'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   addGame?: Resolver<Maybe<ResolversTypes['Game']>, ParentType, ContextType, RequireFields<MutationAddGameArgs, 'input'>>;
   deleteGame?: Resolver<Maybe<ResolversTypes['Game']>, ParentType, ContextType, RequireFields<MutationDeleteGameArgs, 'id'>>;
   updateGame?: Resolver<Maybe<ResolversTypes['Game']>, ParentType, ContextType, RequireFields<MutationUpdateGameArgs, 'id'>>;
 };
 
+export type PaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Pagination'] = ResolversParentTypes['Pagination']> = {
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   author?: Resolver<Maybe<ResolversTypes['Author']>, ParentType, ContextType, RequireFields<QueryAuthorArgs, 'id'>>;
   authors?: Resolver<Maybe<Array<Maybe<ResolversTypes['Author']>>>, ParentType, ContextType>;
   game?: Resolver<Maybe<ResolversTypes['Game']>, ParentType, ContextType, RequireFields<QueryGameArgs, 'id'>>;
-  games?: Resolver<Maybe<Array<Maybe<ResolversTypes['Game']>>>, ParentType, ContextType>;
+  games?: Resolver<Maybe<ResolversTypes['Games']>, ParentType, ContextType, Partial<QueryGamesArgs>>;
   review?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<QueryReviewArgs, 'id'>>;
   reviews?: Resolver<Maybe<Array<Maybe<ResolversTypes['Review']>>>, ParentType, ContextType>;
 };
@@ -290,7 +323,9 @@ export type ReviewResolvers<ContextType = any, ParentType extends ResolversParen
 export type Resolvers<ContextType = any> = {
   Author?: AuthorResolvers<ContextType>;
   Game?: GameResolvers<ContextType>;
+  Games?: GamesResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Pagination?: PaginationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Review?: ReviewResolvers<ContextType>;
 };
@@ -298,22 +333,27 @@ export type Resolvers<ContextType = any> = {
 
 
 export const GetGamesDocument = gql`
-    query GetGames {
-  games {
-    id
-    title
-    platforms
-    averageRating
-    reviews {
+    query GetGames($page: Int) {
+  games(page: $page) {
+    data {
       id
-      rating
-      content
-      game {
-        title
+      title
+      platforms
+      averageRating
+      reviews {
+        id
+        rating
+        content
+        game {
+          title
+        }
+        author {
+          name
+        }
       }
-      author {
-        name
-      }
+    }
+    paginationInfo {
+      total
     }
   }
 }
@@ -331,6 +371,7 @@ export const GetGamesDocument = gql`
  * @example
  * const { data, loading, error } = useGetGamesQuery({
  *   variables: {
+ *      page: // value for 'page'
  *   },
  * });
  */

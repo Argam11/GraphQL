@@ -1,6 +1,6 @@
 export const typeDefs = `#graphql
   type Query {
-    games: [Game]
+    games(page: Int): Games
     game(id: ID!): Game
     reviews: [Review]
     review(id: ID!): Review
@@ -12,6 +12,15 @@ export const typeDefs = `#graphql
     addGame(input: AddGameInput!): Game
     updateGame(id: ID!, input: EditGameInput): Game
     deleteGame(id: ID!): Game
+  }
+
+  type Games {
+    data: [Game]!
+    paginationInfo: Pagination!
+  }
+
+  type Pagination {
+    total: Int!
   }
 
   type Game {

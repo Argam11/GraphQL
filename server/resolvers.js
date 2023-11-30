@@ -1,12 +1,14 @@
 import fs from "fs";
 
+const pageSize = 10;
+
 const resolvers = {
   Query: {
-    games() {
+    games(_, { page = 1 }) {
       const games = JSON.parse(fs.readFileSync('./db/games.json', "utf8"));
       const reviews = JSON.parse(fs.readFileSync('./db/reviews.json', "utf8"));
 
-      const data = games.map((g) => {
+      const data = games.slice(pageSize * (page - 1), pageSize * page).map((g) => {
         const ratingList = reviews.filter((r) => r.game_id === g.id).map((r) => r.rating);
 
         if(ratingList.length) {
@@ -18,7 +20,9 @@ const resolvers = {
         return g;
       });
 
-      return data;
+      const paginationInfo = { total: games.length };
+
+      return { data, paginationInfo };
     },
     game(_, args) {
       const games = JSON.parse(fs.readFileSync('./db/games.json', "utf8"));
