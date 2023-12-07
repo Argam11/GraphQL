@@ -16,7 +16,7 @@ interface DataType {
 function Games() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const { loading, data, refetch } = useGetGamesQuery({ variables: { page }, fetchPolicy: "network-only" });
+  const { loading, data, refetch } = useGetGamesQuery({ variables: { page } });
   const [deleteGame] = useDeleteGameMutation();
 
   const onChange = (pagination: TablePaginationConfig) => {

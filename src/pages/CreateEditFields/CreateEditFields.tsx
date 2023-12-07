@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, Form, Input, Select, Rate } from "antd";
-import { useAddGameMutation, useUpdateGameMutation, useGetGameLazyQuery } from "__generated__";
+import { useAddGameMutation, useUpdateGameMutation, useGetGameLazyQuery, GetGamesDocument } from "__generated__";
+import { gql } from "@apollo/client";
 import Loading from "components/loading/loading";
 
 // const { TextArea } = Input;
@@ -35,7 +36,35 @@ function CreateEditFields() {
   const navigate = useNavigate();
   const { id = "" } = useParams();
   const [form] = Form.useForm();
-  const [addGame, { loading: addGameLoading }] = useAddGameMutation();
+  const [addGame, { loading: addGameLoading }] = useAddGameMutation({
+    update(cache, { data }) {
+      console.log("addGame", data?.addGame);
+
+      cache.modify({
+        fields: {
+          games(existingGames = []) {
+            console.log("existingGames", existingGames);
+
+            const newGameRef = cache.writeFragment({
+              data: data?.addGame,
+              fragment: gql`
+                fragment addGameFragment on Game {
+                  id
+                  title
+                  platforms
+                  averageRating
+                }
+              `,
+            });
+
+            console.log("newGameRef", newGameRef);
+
+            return {...existingGames, data: [...existingGames.data, newGameRef]};
+          },
+        },
+      });
+    },
+  });
   const [updateGame, { loading: updateGameLoading }] = useUpdateGameMutation();
   const [fetchGame, { loading: fetchGameLoading }] = useGetGameLazyQuery();
 
@@ -45,14 +74,12 @@ function CreateEditFields() {
         try {
           const { data } = await fetchGame({ variables: { id } });
           const fieldData = [
-            { name: 'title', value: data?.game?.title },
-            { name: 'platforms', value: data?.game?.platforms },
+            { name: "title", value: data?.game?.title },
+            { name: "platforms", value: data?.game?.platforms },
           ];
 
           form.setFields(fieldData);
-        } catch (error) {
-          
-        }
+        } catch (error) {}
       })();
     }
   }, [id, fetchGame, form]);
@@ -61,13 +88,13 @@ function CreateEditFields() {
     try {
       const { title, platforms } = values;
 
-      if(id) {
+      if (id) {
         await updateGame({
           variables: {
             id,
             input: {
               platforms,
-              title
+              title,
             },
           },
         });
@@ -76,13 +103,13 @@ function CreateEditFields() {
           variables: {
             input: {
               platforms,
-              title
+              title,
             },
           },
         });
       }
 
-      navigate('/');
+      navigate("/");
     } catch (error) {
       console.error(error);
     }

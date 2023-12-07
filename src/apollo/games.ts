@@ -63,14 +63,18 @@ export const ADD_GAME = gql`
   mutation AddGame($input: AddGameInput!) {
     addGame(input: $input) {
       id
+      title
+      platforms
+      averageRating
     }
   }
 `;
 
 export const UPDATE_GAME = gql`
+  {ADD_GAME_FRAGMENT}
   mutation UpdateGame($id: ID!, $input: EditGameInput!) {
     updateGame(id: $id, input: $input) {
-      id
+      ...ADD_GAME_FRAGMENT
     }
   }
 `;
@@ -80,5 +84,14 @@ export const DELETE_GAME = gql`
     deleteGame(id: $id) {
       id
     }
+  }
+`;
+
+export const ADD_GAME_FRAGMENT = gql`
+  fragment AddGameFragment on Game {
+    id
+    title
+    platforms
+    averageRating
   }
 `;
