@@ -1,7 +1,11 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Table, Button, Modal } from "antd";
-import type { ColumnsType, TableProps, TablePaginationConfig } from "antd/es/table";
+import type {
+  ColumnsType,
+  TableProps,
+  TablePaginationConfig,
+} from "antd/es/table";
 import { useGetGamesQuery, useDeleteGameMutation } from "__generated__";
 import Loading from "components/loading/loading";
 import "./style.scss";
@@ -92,6 +96,10 @@ function Games() {
     [navigate, deleteGame, refetch]
   );
 
+  const onClick = () => {
+    console.log(11);
+  };
+
   return (
     <div>
       <Loading loading={loading} />
@@ -99,9 +107,13 @@ function Games() {
         columns={columns}
         dataSource={data?.games?.data as TableProps<DataType>["dataSource"]}
         rowKey="id"
-        pagination={{ total: data?.games?.paginationInfo.total, showSizeChanger: false }}
+        pagination={{
+          total: data?.games?.paginationInfo.total,
+          showSizeChanger: false,
+        }}
         onChange={onChange}
       />
+      <button onClick={onClick}>Click</button>
     </div>
   );
 }

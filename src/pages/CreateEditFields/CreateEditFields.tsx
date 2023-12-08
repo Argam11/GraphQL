@@ -40,29 +40,29 @@ function CreateEditFields() {
     update(cache, { data }) {
       console.log("addGame", data?.addGame);
 
-      cache.modify({
-        fields: {
-          games(existingGames = []) {
-            console.log("existingGames", existingGames);
+      // cache.modify({
+      //   fields: {
+      //     games(existingGames = []) {
+      //       console.log("existingGames", existingGames);
 
-            const newGameRef = cache.writeFragment({
-              data: data?.addGame,
-              fragment: gql`
-                fragment addGameFragment on Game {
-                  id
-                  title
-                  platforms
-                  averageRating
-                }
-              `,
-            });
+      //       const newGameRef = cache.writeFragment({
+      //         data: data?.addGame,
+      //         fragment: gql`
+      //           fragment addGameFragment on Game {
+      //             id
+      //             title
+      //             platforms
+      //             averageRating
+      //           }
+      //         `,
+      //       });
 
-            console.log("newGameRef", newGameRef);
+      //       console.log("newGameRef", newGameRef);
 
-            return {...existingGames, data: [...existingGames.data, newGameRef]};
-          },
-        },
-      });
+      //       return {...existingGames, data: [...existingGames.data, newGameRef]};
+      //     },
+      //   },
+      // });
     },
   });
   const [updateGame, { loading: updateGameLoading }] = useUpdateGameMutation();

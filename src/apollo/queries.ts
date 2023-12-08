@@ -1,9 +1,12 @@
 import { gql } from "@apollo/client";
 
+import { ADD_GAME_FRAGMENT } from './fragments'; 
+
 export const GET_GAMES = gql`
   query GetGames($page: Int) {
     games(page: $page) {
       data {
+        ...AddGameFragment
         id
         title
         platforms
@@ -25,15 +28,13 @@ export const GET_GAMES = gql`
       }
     }
   }
+  ${ADD_GAME_FRAGMENT}
 `;
 
 export const GET_GAME = gql`
   query GetGame($id: ID!) {
     game(id: $id) {
-      id
-      title
-      platforms
-      averageRating
+      ...AddGameFragment
       reviews {
         id
         rating
@@ -57,41 +58,5 @@ export const GET_GAME = gql`
       }
     }
   }
-`;
-
-export const ADD_GAME = gql`
-  mutation AddGame($input: AddGameInput!) {
-    addGame(input: $input) {
-      id
-      title
-      platforms
-      averageRating
-    }
-  }
-`;
-
-export const UPDATE_GAME = gql`
-  {ADD_GAME_FRAGMENT}
-  mutation UpdateGame($id: ID!, $input: EditGameInput!) {
-    updateGame(id: $id, input: $input) {
-      ...ADD_GAME_FRAGMENT
-    }
-  }
-`;
-
-export const DELETE_GAME = gql`
-  mutation DeleteGame($id: ID!) {
-    deleteGame(id: $id) {
-      id
-    }
-  }
-`;
-
-export const ADD_GAME_FRAGMENT = gql`
-  fragment AddGameFragment on Game {
-    id
-    title
-    platforms
-    averageRating
-  }
+  ${ADD_GAME_FRAGMENT}
 `;
