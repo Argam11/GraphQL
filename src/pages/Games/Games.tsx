@@ -1,14 +1,13 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Table, Button, Modal } from "antd";
-import type {
-  ColumnsType,
-  TableProps,
-  TablePaginationConfig,
-} from "antd/es/table";
+import type { ColumnsType, TableProps, TablePaginationConfig } from "antd/es/table";
 import { useGetGamesQuery, useDeleteGameMutation } from "__generated__";
 import Loading from "components/loading/loading";
 import "./style.scss";
+
+import client from "apollo/apollo-config";
+import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 
 interface DataType {
   id: string;
@@ -97,7 +96,34 @@ function Games() {
   );
 
   const onClick = () => {
-    console.log(11);
+    const { cache } = client as any;
+    const myGame = cache.data.data["Game:1"];
+
+    client.cache.modify({
+      // id: cache.identify(myGame),
+      fields: {
+        games(existingGameRefs, { readField }) {
+          const list = existingGameRefs.data.filter((gameRef: any) => {
+            return "q" !== readField("title", gameRef);
+          });
+
+          list.push({
+            __typename: "Game",
+            id: "55",
+            title: "ooo",
+            platform: ['rrr'],
+            reviews: [],
+            averageRating: 1.1
+          });
+
+          console.log("list", list);
+
+          console.log("existingGameRefs", existingGameRefs);
+
+          return { ...existingGameRefs, data: list };
+        },
+      },
+    });
   };
 
   return (
