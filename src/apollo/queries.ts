@@ -7,10 +7,6 @@ export const GET_GAMES = gql`
     games(page: $page) {
       data {
         ...AddGameFragment
-        id
-        title
-        platforms
-        averageRating
         reviews {
           id
           rating
