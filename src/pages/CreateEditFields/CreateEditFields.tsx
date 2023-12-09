@@ -38,31 +38,26 @@ function CreateEditFields() {
   const [form] = Form.useForm();
   const [addGame, { loading: addGameLoading }] = useAddGameMutation({
     update(cache, { data }) {
-      console.log("addGame", data?.addGame);
+      cache.modify({
+        fields: {
+          games(existingGames = []) {
+            const newGameRef = cache.writeFragment({
+              data: data?.addGame,
+              fragment: gql`
+                fragment addNewGameFragment on Game {
+                  id
+                  title
+                  platforms
+                  averageRating
+                  reviews
+                }
+              `,
+            });
 
-      // cache.modify({
-      //   fields: {
-      //     games(existingGames = []) {
-      //       console.log("existingGames", existingGames);
-
-      //       const newGameRef = cache.writeFragment({
-      //         data: data?.addGame,
-      //         fragment: gql`
-      //           fragment addGameFragment on Game {
-      //             id
-      //             title
-      //             platforms
-      //             averageRating
-      //           }
-      //         `,
-      //       });
-
-      //       console.log("newGameRef", newGameRef);
-
-      //       return {...existingGames, data: [...existingGames.data, newGameRef]};
-      //     },
-      //   },
-      // });
+            return {...existingGames, data: [...existingGames.data, newGameRef]};
+          },
+        },
+      });
     },
   });
   const [updateGame, { loading: updateGameLoading }] = useUpdateGameMutation();
@@ -99,7 +94,7 @@ function CreateEditFields() {
           },
         });
       } else {
-        addGame({
+        await addGame({
           variables: {
             input: {
               platforms,

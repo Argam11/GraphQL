@@ -132,7 +132,7 @@ export type AddGameMutationVariables = Exact<{
 }>;
 
 
-export type AddGameMutation = { __typename?: 'Mutation', addGame?: { __typename?: 'Game', id: string, title: string, platforms: Array<string>, averageRating?: number | null } | null };
+export type AddGameMutation = { __typename?: 'Mutation', addGame?: { __typename?: 'Game', id: string, title: string, platforms: Array<string>, averageRating?: number | null, reviews: Array<{ __typename?: 'Review', id: string }> } | null };
 
 export type UpdateGameMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -345,6 +345,9 @@ export const AddGameDocument = gql`
     mutation AddGame($input: AddGameInput!) {
   addGame(input: $input) {
     ...AddGameFragment
+    reviews {
+      id
+    }
   }
 }
     ${AddGameFragmentFragmentDoc}`;

@@ -1,13 +1,11 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useApolloClient } from "@apollo/client";
 import { Table, Button, Modal } from "antd";
 import type { ColumnsType, TableProps, TablePaginationConfig } from "antd/es/table";
 import { useGetGamesQuery, useDeleteGameMutation } from "__generated__";
 import Loading from "components/loading/loading";
 import "./style.scss";
-
-import client from "apollo/apollo-config";
-import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 
 interface DataType {
   id: string;
@@ -17,9 +15,10 @@ interface DataType {
 }
 
 function Games() {
+  const client = useApolloClient();
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const { loading, data, refetch } = useGetGamesQuery({ variables: { page } });
+  const { loading, data } = useGetGamesQuery({ variables: { page } });
   const [deleteGame] = useDeleteGameMutation();
 
   const onChange = (pagination: TablePaginationConfig) => {
@@ -72,8 +71,21 @@ function Games() {
                   Modal.confirm({
                     title: "Confirm",
                     onOk: async () => {
-                      await deleteGame({ variables: { id } });
-                      refetch();
+                      try {
+                        await deleteGame({ variables: { id } });
+
+                        client.cache.modify({
+                          fields: {
+                            games(games, { readField }) {
+                              const newList = games.data.filter((gameRef: any) => id !== readField("id", gameRef));
+
+                              return { ...games, data: newList };
+                            },
+                          },
+                        });
+                      } catch (error) {
+                        console.error(error);
+                      }
                     },
                     content: "Are you sure you want to delete this game?",
                     footer: (_, { OkBtn, CancelBtn }) => (
@@ -92,39 +104,8 @@ function Games() {
         },
       },
     ],
-    [navigate, deleteGame, refetch]
+    [navigate, deleteGame, client.cache]
   );
-
-  const onClick = () => {
-    const { cache } = client as any;
-    const myGame = cache.data.data["Game:1"];
-
-    client.cache.modify({
-      // id: cache.identify(myGame),
-      fields: {
-        games(existingGameRefs, { readField }) {
-          const list = existingGameRefs.data.filter((gameRef: any) => {
-            return "q" !== readField("title", gameRef);
-          });
-
-          list.push({
-            __typename: "Game",
-            id: "55",
-            title: "ooo",
-            platform: ['rrr'],
-            reviews: [],
-            averageRating: 1.1
-          });
-
-          console.log("list", list);
-
-          console.log("existingGameRefs", existingGameRefs);
-
-          return { ...existingGameRefs, data: list };
-        },
-      },
-    });
-  };
 
   return (
     <div>
@@ -139,7 +120,6 @@ function Games() {
         }}
         onChange={onChange}
       />
-      <button onClick={onClick}>Click</button>
     </div>
   );
 }

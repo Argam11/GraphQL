@@ -6,6 +6,9 @@ export const ADD_GAME = gql`
   mutation AddGame($input: AddGameInput!) {
     addGame(input: $input) {
       ...AddGameFragment
+      reviews {
+        id
+      }
     }
   }
   ${ADD_GAME_FRAGMENT}
