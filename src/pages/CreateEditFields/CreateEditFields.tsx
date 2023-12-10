@@ -54,7 +54,7 @@ function CreateEditFields() {
               `,
             });
 
-            return {...existingGames, data: [...existingGames.data, newGameRef]};
+            return { ...existingGames, data: [...existingGames.data, newGameRef] };
           },
         },
       });

@@ -4,7 +4,16 @@ const client = new ApolloClient({
   uri: "http://localhost:4000/",
   cache: new InMemoryCache({
     addTypename: true,
-    resultCaching: true
+    resultCaching: true,
+    typePolicies: {
+      Query: {
+        fields: {
+          games: {
+            keyArgs: ["page"],
+          },
+        },
+      },
+    },
   }),
 });
 
